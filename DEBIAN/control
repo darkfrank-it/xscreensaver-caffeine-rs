@@ -1,5 +1,5 @@
 Package: xscreensaver-caffeine-rs
-Version: 1.0.0
+Version: 1.0.1
 Architecture: all
 Maintainer: Nicola Danese
 Depends: bash

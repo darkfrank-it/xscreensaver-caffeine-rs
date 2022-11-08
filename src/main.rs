@@ -10,6 +10,20 @@ struct CaffeineTray {
     tx: Sender<i32>,
 }
 
+trait Caffeine: ksni::Tray {
+    fn notify(&self);
+}
+
+impl Caffeine for CaffeineTray {
+    fn notify(&self) {
+        let mut val = 0;
+        if self.activated {
+            val = 1;
+        }
+        self.tx.send(val).unwrap();
+    }
+}
+
 impl ksni::Tray for CaffeineTray {
     fn icon_name(&self) -> String {
         if self.activated {
@@ -28,7 +42,10 @@ impl ksni::Tray for CaffeineTray {
             CheckmarkItem {
                 label: "Activated".into(),
                 checked: self.activated,
-                activate: Box::new(|this: &mut Self| this.activated = !this.activated),
+                activate: Box::new(|this: &mut Self| {
+                    this.activated = !this.activated;
+                    this.notify();
+                }),
                 ..Default::default()
             }
             .into(),
@@ -37,9 +54,9 @@ impl ksni::Tray for CaffeineTray {
                 icon_name: "dialog-information-symbolic".into(),
                 activate: Box::new(|_| {
                     dialog::Message::new(
-                        "XScreenSaver Caffeine RS\nManually control the desktop's idle state.",
+                        "XScreenSaver Caffeine RS 1.0.1\nManually control the desktop's idle state.\nhttps://github.com/darkfrank-it/xscreensaver-caffeine-rs",
                     )
-                    .title("XScreenSaver Caffeine RS 1.0")
+                    .title("XScreenSaver Caffeine RS 1.0.1")
                     .show()
                     .expect("Could not display dialog box")
                 }),
@@ -58,11 +75,7 @@ impl ksni::Tray for CaffeineTray {
     fn secondary_activate(&mut self, _x: i32, _y: i32) {
         self.activated = !self.activated;
 
-        let mut val = 0;
-        if self.activated {
-            val = 1;
-        }
-        self.tx.send(val).unwrap();
+        self.notify();
     }
 }
 
@@ -83,16 +96,24 @@ fn main() {
             std::thread::sleep(std::time::Duration::from_secs(50));
             // Prevent execution if screen was manually locked
             // $ xscreensaver-command -time
-            // XScreenSaver 5.15: screen locked since Wed Sep 26 16:26:15 2012   
-            let output = Command::new("xscreensaver-command").arg("-time").stdout(Stdio::piped()).output().expect("Time is bleeding!");
+            // XScreenSaver 5.15: screen locked since Wed Sep 26 16:26:15 2012
+            let output = Command::new("xscreensaver-command")
+                .arg("-time")
+                .stdout(Stdio::piped())
+                .output()
+                .expect("Time is bleeding!");
             // extract the raw bytes that we captured and interpret them as a string
             let stdout = String::from_utf8(output.stdout).expect("No stdout from output");
+
             if !stdout.contains(" locked ") {
-                Command::new("xscreensaver-command").arg("-deactivate");
+                Command::new("xscreensaver-command")
+                    .arg("-deactivate")
+                    .arg("-quiet");
             }
 
             match mrx.try_recv() {
                 Ok(0) => {
+                    val = 0;
                     break;
                 }
                 Ok(_) | Err(TryRecvError::Empty) => {

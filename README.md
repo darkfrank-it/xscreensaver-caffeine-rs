@@ -7,7 +7,7 @@ A tray icon desktop indicator ‘xscreensaver-caffeine-rs’ supplies a manual t
 
 ### From package
 ~~~bash
-sudo dpkg -i xscreensaver-caffeine-rs_1.0.0-2_all.deb
+sudo dpkg -i xscreensaver-caffeine-rs_1.0.1-2_all.deb
 ~~~
 
 ### From git
