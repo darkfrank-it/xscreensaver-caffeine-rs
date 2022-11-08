@@ -1,0 +1,11 @@
+[Desktop Entry]
+Icon=caffeine-cup-full
+Name=XScreenSaver Caffeine RS
+Comment=A tray icon desktop indicator ‘xscreensaver-caffeine-rs’ supplies a manual toggle to prevent xscreensaver to start.
+Exec=/usr/local/bin/xscreensaver-caffeine-rs
+Terminal=false
+Type=Application
+Categories=Utility;TrayIcon;
+Keywords=Screensaver,Power,Saving,Blank
+OnlyShowIn=GNOME;KDE;LXDE;LXQt;MATE;Razor;ROX;TDE;Unity;XFCE;EDE;Cinnamon;Pantheon;
+StartupNotify=false

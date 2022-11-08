@@ -1,0 +1,9 @@
+Package: xscreensaver-caffeine-rs
+Version: 1.0.0
+Architecture: all
+Maintainer: Nicola Danese
+Depends: bash
+Homepage: github.com/darkfrank-it/xscreensaver-caffeine-rs
+Description: Tray icon to give caffeine to xscreensaver, written in Rust.
+Priority: optional
+Section: Utility
