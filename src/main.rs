@@ -108,7 +108,7 @@ fn main() {
             if !stdout.contains(" locked ") {
                 Command::new("xscreensaver-command")
                     .arg("-deactivate")
-                    .arg("-quiet");
+                    .arg("-quiet").output().unwrap();
             }
 
             match mrx.try_recv() {
